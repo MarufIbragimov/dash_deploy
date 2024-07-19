@@ -13,7 +13,9 @@ min_date=invoice['invoice_date'].min()
 max_date=invoice['invoice_date'].max()
 years=invoice.sort_values(by='invoice_date')['invoice_date'].dt.year.unique().tolist()
 
-app=dash.Dash()
+app=dash.Dash(__name__)
+server=app.server
+
 app.layout=html.Div([html.Div(
     children=[
         html.H1('Information on track sales', style={'text-align':'center'}),

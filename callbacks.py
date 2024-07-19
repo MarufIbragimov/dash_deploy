@@ -13,6 +13,37 @@ min_date=invoice['invoice_date'].min()
 max_date=invoice['invoice_date'].max()
 years=invoice.sort_values(by='invoice_date')['invoice_date'].dt.year.unique().tolist()
 
+slider_block=html.Div(
+    children=[
+        html.H2('Slider', style={'display':'inline-block'}),
+        html.Div(
+            dcc.RangeSlider(
+                id='range_slider',
+                min=years[0],
+                max=years[-1],
+                step=1,
+                value=[2022,2024],
+                marks={y:str(y) for y in years}
+            ),
+        )
+    ]
+)
+
+date_picker_block=dcc.DatePickerRange(
+    id='date_prange',
+    min_date_allowed=min_date,
+    max_date_allowed=max_date,
+    #initial_visible_month=max_date,
+)
+
+dropdown_block=dcc.Dropdown(
+    id='country_dd',
+    options=[
+        {'label':c, 'value':c} for c in invoice['country'].sort_values().unique().tolist()
+    ],
+    style={'margin-top':'20px', 'width':'50%'}
+)
+
 app=dash.Dash(__name__)
 server=app.server
 
@@ -21,35 +52,9 @@ app.layout=html.Div([html.Div(
         html.H1('Information on track sales', style={'text-align':'center'}),
         html.Div(
             children=[
-                html.Div(
-                    children=[
-                        html.H2('Slider', style={'display':'inline-block'}),
-                        html.Div(
-                            dcc.RangeSlider(
-                                id='range_slider',
-                                min=years[0],
-                                max=years[-1],
-                                step=1,
-                                value=[2022,2024],
-                                marks={y:str(y) for y in years}
-                            ),
-                            #style={'display':'inline-block'}
-                        )
-                    ]
-                ),
-                dcc.DatePickerRange(
-                    id='date_prange',
-                    min_date_allowed=min_date,
-                    max_date_allowed=max_date,
-                    #initial_visible_month=max_date,
-                ),
-                dcc.Dropdown(
-                    id='country_dd',
-                    options=[
-                        {'label':c, 'value':c} for c in invoice['country'].sort_values().unique().tolist()
-                    ],
-                    style={'margin-top':'20px', 'width':'50%'}
-                )
+                slider_block,
+                date_picker_block,
+                dropdown_block
             ],
             style={'width':'50%'}
         ),
